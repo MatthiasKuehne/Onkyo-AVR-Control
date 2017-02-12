@@ -27,6 +27,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
+import static java.lang.Math.min;
+
 /**
  * Main class to launch the OnkyoAvrControl application
  */
@@ -83,8 +85,8 @@ public class OnkyoAvrControl extends Application {
         scale.setPivotX(0);
         scale.setPivotY(0);
         primaryStage.getScene().getRoot().getTransforms().setAll(scale);
-        primaryStage.setHeight(primaryStage.getHeight() * scalingFacator);
-        primaryStage.setWidth(primaryStage.getWidth() * scalingFacator);
+        primaryStage.setHeight(min(primaryStage.getHeight() * scalingFacator, primaryStage.getMaxHeight()));
+        primaryStage.setWidth(min(primaryStage.getWidth() * scalingFacator, primaryStage.getMaxWidth()));
         primaryStage.show();
     }
 }
