@@ -17,13 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -55,11 +52,39 @@ public class OnkyoAvrControl extends Application {
         try {
             root = FXMLLoader.load(getClass().getResource("gui/fxml/mainFrame.fxml"));
             Scene scene = new Scene(root);
+
             primaryStage.setScene(scene);
             primaryStage.show();
+            // TODO delete this after scaling option integrated into UI
+            // used for dev on highdpi linux (ubuntu gnome) system (4k)
+            // where javafx doesn't automatically scale
+            String osName = System.getProperty("os.name");
+            if (osName.contains("Linux")) {
+                this.scaleUI(primaryStage, 2);
+            }
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             // show error message?
         }
+    }
+
+    /**
+     * private method here for now, gets moved to a ui controller late to be set by user
+     * maybe return boolean -> successful or not
+     * @param scalingFacator to factor to scale to UI
+     *                       must be > 0
+     */
+    private void scaleUI(Stage primaryStage, int scalingFacator) {
+        if (scalingFacator <= 0) {
+            LOGGER.error("Scaling factor must be bigger than zero.");
+            return;
+        }
+        Scale scale = new Scale(scalingFacator, scalingFacator);
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        primaryStage.getScene().getRoot().getTransforms().setAll(scale);
+        primaryStage.setHeight(primaryStage.getHeight() * scalingFacator);
+        primaryStage.setWidth(primaryStage.getWidth() * scalingFacator);
+        primaryStage.show();
     }
 }
