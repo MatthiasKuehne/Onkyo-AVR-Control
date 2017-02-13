@@ -26,8 +26,11 @@ public class SimpleCommunication implements Communication {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void detectDevices() {
+    public void detectDevicesUDP(String message) {
 
     }
 }
