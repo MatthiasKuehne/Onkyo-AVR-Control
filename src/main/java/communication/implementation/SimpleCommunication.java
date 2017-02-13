@@ -18,12 +18,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package communication.implementation;
 
+import communication.CallBackCommunication;
 import communication.Communication;
+import service.CallBackService;
 
-public class SimpleCommunication implements Communication {
+import java.net.InetAddress;
 
-    public SimpleCommunication() {
+public class SimpleCommunication implements Communication, CallBackCommunication {
 
+    private CallBackService callBackService;
+
+    public SimpleCommunication(CallBackService callBackService) {
+        this.callBackService = callBackService;
     }
 
     /**
@@ -31,6 +37,14 @@ public class SimpleCommunication implements Communication {
      */
     @Override
     public void detectDevicesUDP(String message) {
+        byte[] data = "!xECNQSTN".getBytes(); // TODO: outsource command
+        // TODO get local network address
+//        InetAddress.getLocalHost().get
+//        InetAddress address = InetAddress.getByName();
+    }
+
+    @Override
+    public void deviceDetectedCallBack(String message) {
 
     }
 }
