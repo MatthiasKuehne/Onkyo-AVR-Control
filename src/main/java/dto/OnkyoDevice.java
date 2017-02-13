@@ -18,16 +18,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package dto;
 
+import dto.enums.DestinationArea;
 import dto.enums.DeviceCategory;
 
 import java.net.InetSocketAddress;
 
+/**
+ * encapsulates all relevant data of an onkyo device
+ */
 public class OnkyoDevice {
 
     private DeviceCategory deviceCategory;
     private String modelName;
     private InetSocketAddress inetSocketAddress; // IP and port number of device
-    private String destinationArea; // not really needed, fixed 2 characters
+    private DestinationArea destinationArea; // not really needed
     private String macAddress; // not really needed I guess...
 
+    public OnkyoDevice(DeviceCategory deviceCategory, String modelName, InetSocketAddress inetSocketAddress, DestinationArea destinationArea) {
+        this.deviceCategory = deviceCategory;
+        this.modelName = modelName;
+        this.inetSocketAddress = inetSocketAddress;
+        this.destinationArea = destinationArea;
+    }
+
+    public DeviceCategory getDeviceCategory() {
+        return deviceCategory;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public InetSocketAddress getInetSocketAddress() {
+        return inetSocketAddress;
+    }
+
+    public DestinationArea getDestinationArea() {
+        return destinationArea;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public void setInetSocketAddress(InetSocketAddress inetSocketAddress) {
+        this.inetSocketAddress = inetSocketAddress;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
+    }
 }
