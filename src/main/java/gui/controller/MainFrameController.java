@@ -18,12 +18,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package gui.controller;
 
+import gui.CallBackUI;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import service.Service;
 
 /**
  *
  */
-public class MainFrameController {
+public class MainFrameController implements CallBackUI {
     private static final Logger logger = LogManager.getLogger(MainFrameController.class);
+
+    private Service service;
+
+    @FXML
+    private void detectDevicesButtonPressed() {
+        if (this.service != null) {
+            this.service.detectDevices();
+        }
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
 }

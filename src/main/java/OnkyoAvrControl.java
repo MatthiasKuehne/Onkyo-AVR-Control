@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import communication.Communication;
+import communication.implementation.SimpleCommunication;
+import gui.controller.MainFrameController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +27,9 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import service.CallBackService;
+import service.Service;
+import service.implementation.SimpleService;
 
 import java.io.IOException;
 
@@ -52,8 +58,21 @@ public class OnkyoAvrControl extends Application {
         LOGGER.info("Starting Onkyo AVR Control.");
         Parent root;
         try {
-            root = FXMLLoader.load(getClass().getResource("gui/fxml/mainFrame.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            root = fxmlLoader.load(getClass().getResource("gui/fxml/mainFrame.fxml").openStream());
             Scene scene = new Scene(root);
+
+            MainFrameController mainFrameController = (MainFrameController) fxmlLoader.getController();
+
+            if (mainFrameController == null) {
+                LOGGER.error("mainFramController is null, program can't be initialized");
+                return;
+            }
+
+            SimpleService service = null; // or callback interface... can't be service interface
+            Communication communication = new SimpleCommunication(service);
+            service = new SimpleService(communication);
+            mainFrameController.setService(service);
 
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -64,6 +83,7 @@ public class OnkyoAvrControl extends Application {
             if (osName.contains("Linux")) {
                 this.scaleUI(primaryStage, 2);
             }
+
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             // show error message?
@@ -81,6 +101,7 @@ public class OnkyoAvrControl extends Application {
             LOGGER.error("Scaling factor must be bigger than zero.");
             return;
         }
+        LOGGER.info("Setting scaling factor to " + scalingFacator);
         Scale scale = new Scale(scalingFacator, scalingFacator);
         scale.setPivotX(0);
         scale.setPivotY(0);

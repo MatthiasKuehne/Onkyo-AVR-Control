@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
+/*
 Onkyo AVR Control - Java Program to control Onkyo AVRs over a local network
 Copyright (C) 2017 Matthias Mitter
 
@@ -16,15 +14,26 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
+ */
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
+package service.implementation;
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controller.MainFrameController">
-   <children>
-      <Label layoutX="32.0" layoutY="30.0" text="Hello World, Onkyo AVR Control" />
-      <Button layoutX="32.0" layoutY="59.0" mnemonicParsing="false" onAction="#detectDevicesButtonPressed" text="Detect Devices" />
-   </children>
-</AnchorPane>
+import communication.Communication;
+import service.CallBackService;
+import service.Service;
+
+public class SimpleService implements Service, CallBackService {
+
+    Communication communication;
+    // TODO List/queue? of UI callbacks...
+
+
+    public SimpleService(Communication communication) {
+        this.communication = communication;
+    }
+
+    @Override
+    public void detectDevices() {
+        this.communication.detectDevicesUDP("!xECNQSTN"); // TODO "outsource" to constant
+    }
+}

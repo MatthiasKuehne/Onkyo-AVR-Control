@@ -20,11 +20,17 @@ package communication.implementation;
 
 import communication.CallBackCommunication;
 import communication.Communication;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import service.CallBackService;
 
-import java.net.InetAddress;
+import java.net.*;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 
 public class SimpleCommunication implements Communication, CallBackCommunication {
+    private static final Logger LOGGER = LogManager.getLogger(SimpleCommunication.class);
 
     private CallBackService callBackService;
 
@@ -37,14 +43,59 @@ public class SimpleCommunication implements Communication, CallBackCommunication
      */
     @Override
     public void detectDevicesUDP(String message) {
-        byte[] data = "!xECNQSTN".getBytes(); // TODO: outsource command
-        // TODO get local network address
-//        InetAddress.getLocalHost().get
-//        InetAddress address = InetAddress.getByName();
+        byte[] data = message.getBytes();
+        InetAddress broadCastAddress = null;
+        try {
+            broadCastAddress = this.getLocalBroadcastIp();
+        } catch (SocketException e) {
+            LOGGER.error(e.getMessage());
+        } catch (UnknownHostException e) {
+            LOGGER.error(e.getMessage());
+        }
+
+
+
     }
 
     @Override
     public void deviceDetectedCallBack(String message) {
 
+    }
+
+    private InetAddress getLocalBroadcastIp() throws UnknownHostException, SocketException {
+        InetAddress localAddress = InetAddress.getLocalHost();
+        LOGGER.info("Local Address from java API: " + localAddress.getHostAddress());
+
+        String localAddressString = null;
+
+        // API not always returning correct ip, this works better from
+        // http://stackoverflow.com/questions/9481865/getting-the-ip-address-of-the-current-machine-using-java
+        try (final DatagramSocket socket = new DatagramSocket()){
+            socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+            localAddressString = socket.getLocalAddress().getHostAddress();
+            LOGGER.info("UDP socket worked: local address: " + localAddressString);
+        }
+
+        InetAddress broadCastAddress = null;
+        Enumeration<NetworkInterface> nets = NetworkInterface.getNetworkInterfaces();
+        for (NetworkInterface net : Collections.list(nets)) {
+            List<InterfaceAddress> interfaceAddressList = net.getInterfaceAddresses();
+            for (InterfaceAddress interfaceAddress : interfaceAddressList) {
+                if (localAddressString != null) {
+                    // udp socket "trick" did work
+                    if (interfaceAddress.getAddress().getHostAddress().equals(localAddressString)) {
+                        broadCastAddress = interfaceAddress.getBroadcast();
+                        LOGGER.info("Found broadcast address: " + interfaceAddress.getBroadcast());
+                    }
+                } else {
+                    // well maybe the java api returned the correct ip address
+                    if (interfaceAddress.getAddress().equals(localAddress)) {
+                        broadCastAddress = interfaceAddress.getBroadcast();
+                        LOGGER.info("Found broadcast address: " + interfaceAddress.getBroadcast());
+                    }
+                }
+            }
+        }
+        return broadCastAddress;
     }
 }
