@@ -30,7 +30,7 @@ import service.Service;
  *
  */
 public class MainFrameController implements CallBackUI {
-    private static final Logger logger = LogManager.getLogger(MainFrameController.class);
+    private static final Logger LOGGER = LogManager.getLogger(MainFrameController.class);
 
     private Service service;
 
