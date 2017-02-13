@@ -49,8 +49,10 @@ public class ListenerUDP implements Runnable, Closeable {
             data = new byte[1024]; // should be more than enough space for the message
             packet = new DatagramPacket(data, data.length);
             try {
+                LOGGER.info("Waiting for UDP packet.");
                 this.datagramSocket.receive(packet);
                 String message = new String(packet.getData(), 0, packet.getLength());
+                LOGGER.info("Received UDP packet: " + message);
                 this.callBackCommunication.deviceDetectedCallBack(message);
             } catch (IOException e) {
                 // TODO handle exception -> callback in communication?

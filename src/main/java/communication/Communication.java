@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package communication;
 
-public interface Communication {
+import java.io.Closeable;
+
+public interface Communication extends Closeable {
     void detectDevicesUDP(String message);
 }

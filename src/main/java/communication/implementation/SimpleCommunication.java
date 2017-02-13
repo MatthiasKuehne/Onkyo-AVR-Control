@@ -24,18 +24,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.CallBackService;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.*;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SimpleCommunication implements Communication, CallBackCommunication {
     private static final Logger LOGGER = LogManager.getLogger(SimpleCommunication.class);
 
     private CallBackService callBackService;
+    private ExecutorService threadPool;
+    private ListenerUDP listenerUDP;
 
     public SimpleCommunication(CallBackService callBackService) {
         this.callBackService = callBackService;
+        this.threadPool = Executors.newCachedThreadPool();
     }
 
     /**
@@ -53,13 +60,37 @@ public class SimpleCommunication implements Communication, CallBackCommunication
             LOGGER.error(e.getMessage());
         }
 
-
-
+        DatagramPacket packet = new DatagramPacket(data, data.length, broadCastAddress, 60128); // TODO outsource port to constant
+        LOGGER.info("UDP packet sent.");
+        try {
+            DatagramSocket socket = new DatagramSocket();
+            socket.send(packet);
+            if (this.listenerUDP != null) {
+                // TODO first close open listener and thread
+            }
+            this.listenerUDP = new ListenerUDP(socket, this);
+            this.threadPool.execute(this.listenerUDP);
+            LOGGER.info("UDP Listener started");
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @Override
     public void deviceDetectedCallBack(String message) {
+        LOGGER.info("Detected device: " + message);
+        // TODO call back service
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() throws IOException {
+        // TODO close everything
+        this.listenerUDP.close();
+        this.threadPool.shutdown();
+        this.threadPool.shutdownNow();
     }
 
     private InetAddress getLocalBroadcastIp() throws UnknownHostException, SocketException {

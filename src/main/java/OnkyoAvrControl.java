@@ -41,6 +41,9 @@ import static java.lang.Math.min;
 public class OnkyoAvrControl extends Application {
     private static final Logger LOGGER = LogManager.getLogger(OnkyoAvrControl.class);
 
+    private Service service;
+    private Communication communication;
+
     /**
      * The main method.
      *
@@ -69,10 +72,13 @@ public class OnkyoAvrControl extends Application {
                 return;
             }
 
-            SimpleService service = null; // or callback interface... can't be service interface
-            Communication communication = new SimpleCommunication(service);
-            service = new SimpleService(communication);
-            mainFrameController.setService(service);
+            SimpleService simpleService = null; // or callback interface... can't be service interface
+            Communication communication = new SimpleCommunication(simpleService);
+            simpleService = new SimpleService(communication);
+            mainFrameController.setService(simpleService);
+
+            this.service = simpleService;
+            this.communication = communication;
 
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -88,6 +94,16 @@ public class OnkyoAvrControl extends Application {
             LOGGER.error(e.getMessage());
             // show error message?
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        // TODO cleanup everything, threads and so on
+        this.communication.close();
     }
 
     /**
