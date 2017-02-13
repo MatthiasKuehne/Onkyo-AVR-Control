@@ -46,21 +46,21 @@ public class MainFrameController implements CallBackUI {
     @FXML
     private void powerOnButtonPressed() {
         if (this.service != null) {
-            this.service.detectDevices();
+            this.service.powerOn();
         }
     }
 
     @FXML
     private void volumeUpButtonPressed() {
         if (this.service != null) {
-            this.service.detectDevices();
+            this.service.volumeUp();
         }
     }
 
     @FXML
     private void volumeDownButtonPressed() {
         if (this.service != null) {
-            this.service.detectDevices();
+            this.service.volumeDown();
         }
     }
 

@@ -41,6 +41,21 @@ public class SimpleService implements Service, CallBackService {
         this.communication.detectDevicesUDP(msg);
     }
 
+    @Override
+    public void powerOn() {
+
+    }
+
+    @Override
+    public void volumeUp() {
+
+    }
+
+    @Override
+    public void volumeDown() {
+
+    }
+
     /**
      * Wraps a command in a eiscp data message (data characters).
      * adapted method from Tom Gutwin, Eiscp.java in folder TomGutwin
@@ -49,8 +64,7 @@ public class SimpleService implements Service, CallBackService {
      * @param unitType the type of device, x for broadcast, 1 is receiver, 2 stereo
      *
      **/
-    private StringBuilder buildEiscpMessage(String command, String unitType)
-    {
+    private StringBuilder buildEiscpMessage(String command, String unitType) {
         StringBuilder sb = new StringBuilder();
         int eiscpDataSize = command.length() + 2 ; // this is the eISCP data size
         int eiscpMsgSize = eiscpDataSize + 1 + 16 ; // this is the eISCP data size
