@@ -2,7 +2,7 @@
 A java implementation to remotely control ONKYO AVRs over a local Network.
 
 ### Status:
-Currently in early development and non-functional. Come back later again to check it out. :)
+Currently in early development and non-functional. Come back again later to check it out. :)
 
 ### Sources:
 
