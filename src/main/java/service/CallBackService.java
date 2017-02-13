@@ -19,4 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package service;
 
 public interface CallBackService {
+
+    void deviceDetectedCallBack(String message);
 }

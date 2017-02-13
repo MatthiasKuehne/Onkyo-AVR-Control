@@ -80,6 +80,7 @@ public class SimpleCommunication implements Communication, CallBackCommunication
     public void deviceDetectedCallBack(String message) {
         LOGGER.info("Detected device: " + message);
         // TODO call back service
+        this.callBackService.deviceDetectedCallBack(message);
     }
 
     /**

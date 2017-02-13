@@ -56,6 +56,11 @@ public class SimpleService implements Service, CallBackService {
 
     }
 
+    @Override
+    public void deviceDetectedCallBack(String message) {
+
+    }
+
     /**
      * Wraps a command in a eiscp data message (data characters).
      * adapted method from Tom Gutwin, Eiscp.java in folder TomGutwin
@@ -115,4 +120,6 @@ public class SimpleService implements Service, CallBackService {
 
         return sb;
     }
+
+
 }
