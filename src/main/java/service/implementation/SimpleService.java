@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package service.implementation;
 
 import communication.Communication;
+import dto.OnkyoDevice;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.CallBackService;
@@ -58,12 +59,14 @@ public class SimpleService implements Service, CallBackService {
 
     @Override
     public void deviceDetectedCallBack(String message) {
-
+        OnkyoDevice onkyoDevice = this.getDeviceFromMessage(message);
     }
 
     /**
      * Wraps a command in a eiscp data message (data characters).
      * adapted method from Tom Gutwin, Eiscp.java in folder TomGutwin
+     *
+     * TODO outsource method
      *
      * @param command must be one of the Strings from the eiscp.Eiscp.Command class.
      * @param unitType the type of device, x for broadcast, 1 is receiver, 2 stereo
@@ -121,5 +124,37 @@ public class SimpleService implements Service, CallBackService {
         return sb;
     }
 
+    private String getIscpMessageFromRawMessage(String rawMessage) {
+        // TODO parse header length...
 
+        String header = rawMessage.substring(0, 20);
+        int headerLen = header.length(); // for debugging, delete ...
+
+        int eofIndex = rawMessage.indexOf("\u001a", 20);
+        if (eofIndex < 0) {
+            eofIndex = rawMessage.indexOf("\u0019", 20);
+            if (eofIndex < 0) {
+                eofIndex = rawMessage.indexOf("\r", 20);
+                if (eofIndex < 0) {
+                    eofIndex = rawMessage.indexOf("\n", 20);
+                }
+            }
+        }
+
+        String iscpMessage = rawMessage.substring(20, eofIndex);
+        return iscpMessage;
+    }
+
+    /**
+     * maybe change to take not raw, but already iscp message...?
+     * @param message
+     * @return
+     */
+    private OnkyoDevice getDeviceFromMessage(String message) {
+        OnkyoDevice onkyoDevice = null;
+
+        String iscpMessage = this.getIscpMessageFromRawMessage(message);
+
+        return onkyoDevice;
+    }
 }
