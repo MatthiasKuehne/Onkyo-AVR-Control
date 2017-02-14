@@ -40,6 +40,10 @@ public class SimpleCommunication implements Communication, CallBackCommunication
     private ExecutorService threadPool;
     private ListenerUDP listenerUDP;
 
+    public SimpleCommunication() {
+        this(null);
+    }
+
     public SimpleCommunication(CallBackService callBackService) {
         this.callBackService = callBackService;
         this.threadPool = Executors.newCachedThreadPool();
@@ -77,10 +81,10 @@ public class SimpleCommunication implements Communication, CallBackCommunication
     }
 
     @Override
-    public void deviceDetectedCallBack(String message) {
+    public void deviceDetectedCallBack(String message, InetAddress address) {
         LOGGER.info("Detected device: " + message);
         // TODO call back service
-        this.callBackService.deviceDetectedCallBack(message);
+        this.callBackService.deviceDetectedCallBack(message, address);
     }
 
     /**
@@ -129,5 +133,9 @@ public class SimpleCommunication implements Communication, CallBackCommunication
             }
         }
         return broadCastAddress;
+    }
+
+    public void setCallBackService(CallBackService callBackService) {
+        this.callBackService = callBackService;
     }
 }

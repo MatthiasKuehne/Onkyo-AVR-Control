@@ -72,9 +72,9 @@ public class OnkyoAvrControl extends Application {
                 return;
             }
 
-            SimpleService simpleService = null; // or callback interface... can't be service interface
+            SimpleService simpleService = new SimpleService();
             Communication communication = new SimpleCommunication(simpleService);
-            simpleService = new SimpleService(communication);
+            simpleService.setCommunication(communication);
             mainFrameController.setService(simpleService);
 
             this.service = simpleService;

@@ -18,7 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package service;
 
+import java.net.InetAddress;
+
 public interface CallBackService {
 
-    void deviceDetectedCallBack(String message);
+    void deviceDetectedCallBack(String message, InetAddress address);
 }

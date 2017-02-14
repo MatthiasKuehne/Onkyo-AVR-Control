@@ -53,7 +53,7 @@ public class ListenerUDP implements Runnable, Closeable {
                 this.datagramSocket.receive(packet);
                 String message = new String(packet.getData(), 0, packet.getLength());
                 LOGGER.info("Received UDP packet: " + message);
-                this.callBackCommunication.deviceDetectedCallBack(message);
+                this.callBackCommunication.deviceDetectedCallBack(message, packet.getAddress());
             } catch (IOException e) {
                 // TODO handle exception -> callback in communication?
                 if (!Thread.currentThread().isInterrupted()) {

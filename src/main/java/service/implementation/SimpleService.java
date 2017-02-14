@@ -20,10 +20,14 @@ package service.implementation;
 
 import communication.Communication;
 import dto.OnkyoDevice;
+import dto.utils.EnumValueTranslation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.CallBackService;
 import service.Service;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 
 public class SimpleService implements Service, CallBackService {
     private static final Logger LOGGER = LogManager.getLogger(SimpleService.class);
@@ -31,6 +35,8 @@ public class SimpleService implements Service, CallBackService {
     Communication communication;
     // TODO List/queue? of UI callbacks...
 
+
+    public SimpleService() {}
 
     public SimpleService(Communication communication) {
         this.communication = communication;
@@ -58,8 +64,8 @@ public class SimpleService implements Service, CallBackService {
     }
 
     @Override
-    public void deviceDetectedCallBack(String message) {
-        OnkyoDevice onkyoDevice = this.getDeviceFromMessage(message);
+    public void deviceDetectedCallBack(String message, InetAddress address) {
+        OnkyoDevice onkyoDevice = this.getDeviceFromMessage(message, address);
     }
 
     /**
@@ -126,22 +132,21 @@ public class SimpleService implements Service, CallBackService {
 
     private String getIscpMessageFromRawMessage(String rawMessage) {
         // TODO parse header length...
+        int headerLen = 16;
+        String header = rawMessage.substring(0, headerLen);
 
-        String header = rawMessage.substring(0, 20);
-        int headerLen = header.length(); // for debugging, delete ...
-
-        int eofIndex = rawMessage.indexOf("\u001a", 20);
+        int eofIndex = rawMessage.indexOf("\u001a", headerLen);
         if (eofIndex < 0) {
-            eofIndex = rawMessage.indexOf("\u0019", 20);
+            eofIndex = rawMessage.indexOf("\u0019", headerLen);
             if (eofIndex < 0) {
-                eofIndex = rawMessage.indexOf("\r", 20);
+                eofIndex = rawMessage.indexOf("\r", headerLen);
                 if (eofIndex < 0) {
-                    eofIndex = rawMessage.indexOf("\n", 20);
+                    eofIndex = rawMessage.indexOf("\n", headerLen);
                 }
             }
         }
 
-        String iscpMessage = rawMessage.substring(20, eofIndex);
+        String iscpMessage = rawMessage.substring(headerLen, eofIndex);
         return iscpMessage;
     }
 
@@ -150,11 +155,32 @@ public class SimpleService implements Service, CallBackService {
      * @param message
      * @return
      */
-    private OnkyoDevice getDeviceFromMessage(String message) {
+    private OnkyoDevice getDeviceFromMessage(String message, InetAddress address) {
         OnkyoDevice onkyoDevice = null;
-
         String iscpMessage = this.getIscpMessageFromRawMessage(message);
+        String deviceCategoryStr = iscpMessage.substring(1,2);
+        String[] messageSplit = iscpMessage.substring(5).split("/");
+        if (messageSplit.length >= 3 ) {
+            String modelName = messageSplit[0];
+            int port = Integer.parseInt(messageSplit[1]);
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
+            String destinationAreaStr = messageSplit[2];
+            onkyoDevice = new OnkyoDevice(EnumValueTranslation.convertToDeviceCategory(deviceCategoryStr), modelName,
+                    inetSocketAddress, EnumValueTranslation.convertToDestinationArea(destinationAreaStr));
 
+            if (messageSplit.length >= 4) {
+                // also set mac address
+                onkyoDevice.setMacAddress(messageSplit[3]);
+            }
+
+        } else {
+            LOGGER.error("iscmp detection reply message is too short!");
+            // TODO throw exception
+        }
         return onkyoDevice;
+    }
+
+    public void setCommunication(Communication communication) {
+        this.communication = communication;
     }
 }

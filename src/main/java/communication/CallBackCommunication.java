@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package communication;
 
+import java.net.InetAddress;
+
 public interface CallBackCommunication {
-    void deviceDetectedCallBack(String message);
+    void deviceDetectedCallBack(String message, InetAddress address);
 }
