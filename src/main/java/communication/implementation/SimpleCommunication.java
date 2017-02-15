@@ -93,9 +93,11 @@ public class SimpleCommunication implements Communication, CallBackCommunication
     @Override
     public void close() throws IOException {
         // TODO close everything
-        this.listenerUDP.close();
-        this.threadPool.shutdown();
-        this.threadPool.shutdownNow();
+        if (this.listenerUDP != null) {
+            this.listenerUDP.close();
+            this.threadPool.shutdown();
+            this.threadPool.shutdownNow();
+        }
     }
 
     private InetAddress getLocalBroadcastIp() throws UnknownHostException, SocketException {
