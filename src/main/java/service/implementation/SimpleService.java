@@ -21,6 +21,7 @@ package service.implementation;
 import communication.Communication;
 import dto.OnkyoDevice;
 import dto.utils.EnumValueTranslation;
+import gui.CallBackUI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.CallBackService;
@@ -35,6 +36,8 @@ public class SimpleService implements Service, CallBackService {
     Communication communication;
     // TODO List/queue? of UI callbacks...
 
+    // just testing...
+    CallBackUI callBackUI;
 
     public SimpleService() {}
 
@@ -66,6 +69,7 @@ public class SimpleService implements Service, CallBackService {
     @Override
     public void deviceDetectedCallBack(String message, InetAddress address) {
         OnkyoDevice onkyoDevice = this.getDeviceFromMessage(message, address);
+        this.callBackUI.onkyoDeviceDetected(onkyoDevice);
     }
 
     /**
@@ -182,5 +186,9 @@ public class SimpleService implements Service, CallBackService {
 
     public void setCommunication(Communication communication) {
         this.communication = communication;
+    }
+
+    public void setCallBackUI(CallBackUI callBackUI) {
+        this.callBackUI = callBackUI;
     }
 }

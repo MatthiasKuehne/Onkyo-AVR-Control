@@ -16,10 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package gui;
-
-import dto.OnkyoDevice;
-
-public interface CallBackUI {
-    void onkyoDeviceDetected(OnkyoDevice onkyoDevice);
+#onkyoDeviceListitemAnchor {
+    -fx-background-color: grey;
+    -fx-border-radius: 7 7 7 7;
+    -fx-background-radius: 7 7 7 7;
+    -fx-border-color: black;
 }

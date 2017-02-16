@@ -18,13 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package gui.controller;
 
+import dto.OnkyoDevice;
 import gui.CallBackUI;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import service.Service;
+
+import java.io.IOException;
 
 /**
  *
@@ -34,11 +41,17 @@ public class MainFrameController implements CallBackUI {
 
     private Service service;
 
+    @FXML
+    private VBox onkyoDeviceListContainer;
+
     ///// methods and buttons mainly to test first functionalities ////
 
     @FXML
     private void detectDevicesButtonPressed() {
         if (this.service != null) {
+            // first delete previously found devices from UI
+            this.onkyoDeviceListContainer.getChildren().clear();
+
             this.service.detectDevices();
         }
     }
@@ -68,5 +81,36 @@ public class MainFrameController implements CallBackUI {
 
     public void setService(Service service) {
         this.service = service;
+    }
+
+
+
+    // just UI testing //
+    private void addOnkyoDeviceListItem(OnkyoDevice onkyoDevice) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                FXMLLoader fxmlLoader2 = new FXMLLoader();
+                Parent onkyoDeviceListitem;
+                try {
+                    onkyoDeviceListitem = fxmlLoader2.load(getClass().getClassLoader().getResource("gui/fxml/onkyoDeviceListItem.fxml").openStream());
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage());
+                    return;
+                }
+
+                // set onkyoDevice in controller
+                OnkyoDeviceListItemController onkyoDeviceListItemController = (OnkyoDeviceListItemController) fxmlLoader2.getController();
+                onkyoDeviceListItemController.setOnkyoDevice(onkyoDevice);
+
+                // show listItem in container
+                onkyoDeviceListContainer.getChildren().add(onkyoDeviceListitem);
+            }
+        });
+    }
+
+    @Override
+    public void onkyoDeviceDetected(OnkyoDevice onkyoDevice) {
+        this.addOnkyoDeviceListItem(onkyoDevice);
     }
 }

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import communication.Communication;
 import communication.implementation.SimpleCommunication;
 import gui.controller.MainFrameController;
+import gui.controller.OnkyoDeviceListItemController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -27,7 +28,6 @@ import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import service.CallBackService;
 import service.Service;
 import service.implementation.SimpleService;
 
@@ -62,7 +62,8 @@ public class OnkyoAvrControl extends Application {
         Parent root;
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
-            root = fxmlLoader.load(getClass().getResource("gui/fxml/mainFrame.fxml").openStream());
+            root = fxmlLoader.load(getClass().getClassLoader().getResource("gui/fxml/mainFrame.fxml").openStream());
+
             Scene scene = new Scene(root);
 
             MainFrameController mainFrameController = (MainFrameController) fxmlLoader.getController();
@@ -76,6 +77,7 @@ public class OnkyoAvrControl extends Application {
             Communication communication = new SimpleCommunication(simpleService);
             simpleService.setCommunication(communication);
             mainFrameController.setService(simpleService);
+            simpleService.setCallBackUI(mainFrameController);
 
             this.service = simpleService;
             this.communication = communication;
@@ -89,7 +91,6 @@ public class OnkyoAvrControl extends Application {
             if (osName.contains("Linux")) {
                 this.scaleUI(primaryStage, 2);
             }
-
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
             // show error message?
