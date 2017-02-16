@@ -87,6 +87,8 @@ public class MainFrameController implements CallBackUI {
 
     // just UI testing //
     private void addOnkyoDeviceListItem(OnkyoDevice onkyoDevice) {
+
+        // UI changes must run in JavaFX thread
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

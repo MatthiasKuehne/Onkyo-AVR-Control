@@ -70,7 +70,8 @@ public class SimpleCommunication implements Communication, CallBackCommunication
             DatagramSocket socket = new DatagramSocket();
             socket.send(packet);
             if (this.listenerUDP != null) {
-                // TODO first close open listener and thread
+                // first close open listener and thread
+                this.listenerUDP.close();
             }
             this.listenerUDP = new ListenerUDP(socket, this);
             this.threadPool.execute(this.listenerUDP);

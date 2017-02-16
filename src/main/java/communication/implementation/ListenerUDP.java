@@ -32,10 +32,12 @@ public class ListenerUDP implements Runnable, Closeable {
 
     private DatagramSocket datagramSocket;
     private CallBackCommunication callBackCommunication;
+    private boolean isClosed;
 
     public ListenerUDP(DatagramSocket datagramSocket, CallBackCommunication callBackCommunication) {
         this.datagramSocket = datagramSocket;
         this.callBackCommunication = callBackCommunication;
+        this.isClosed = false;
     }
 
     /**
@@ -45,7 +47,7 @@ public class ListenerUDP implements Runnable, Closeable {
     public void run() {
         byte[] data; // initialize here?
         DatagramPacket packet;
-        while(!Thread.currentThread().isInterrupted()) {
+        while(!Thread.currentThread().isInterrupted() && !this.isClosed) {
             data = new byte[1024]; // should be more than enough space for the message
             packet = new DatagramPacket(data, data.length);
             try {
@@ -70,6 +72,7 @@ public class ListenerUDP implements Runnable, Closeable {
     public void close() throws IOException {
         if (this.datagramSocket != null) {
             this.datagramSocket.close();
+            this.isClosed = true;
         }
     }
 }
